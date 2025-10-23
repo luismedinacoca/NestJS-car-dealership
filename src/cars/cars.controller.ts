@@ -7,9 +7,10 @@ export class CarsController {
   getAllCars() {
     return this.cars;
   }
-  /*
+
+  // get car by ID:
   @Get(':id')
-  getCarById(@Param('id') id: string) {
+  getCarById(@Param('id') id: number) {
     console.log({ id: +id });
     return {
       message: 'success',
@@ -17,7 +18,6 @@ export class CarsController {
       car: this.cars[+id],
     };
   }
-    */
 }
 
 /* 

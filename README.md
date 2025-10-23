@@ -58,7 +58,7 @@ then:
 Expected prompt:
 ```bash
 cd car-dealership
-npm start:dev
+npm run start:dev
 ```
 
 
@@ -280,4 +280,85 @@ export class CarsController {
   }
 }
 ```
+
+
+## 📚 Lecture 035: Getting a car by its ID
+
+### 1. Add a new method in cars.controller:
+```ts
+import { Controller, Get, Param } from '@nestjs/common';
+@Controller('cars')
+export class CarsController {
+  private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
+  @Get()
+  getAllCars() {
+    return this.cars;
+  }
+
+  // get car by ID:
+  @Get(':id')
+  getCarById(@Param('id') id: number) {
+    console.log({ id });
+    return {
+      message: 'success',
+      id: id,
+      car: this.cars[+id],
+    };
+  }
+}
+```
+
+> Outcome from Postmand and Server(terminal)
+<img src="./img/section03-lecture035-001.png">
+<img src="./img/section03-lecture035-002.png">
+
+### 2. Transform the **`id`** to number:
+```ts
+import { Controller, Get, Param } from '@nestjs/common';
+@Controller('cars')
+export class CarsController {
+  private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
+  @Get()
+  getAllCars() {
+    return this.cars;
+  }
+  // get car by ID:
+  @Get(':id')
+  getCarById(@Param('id') id: number) {
+    console.log({ id: +id });
+    return {
+      message: 'success',
+      id: +id,
+      car: this.cars[+id],
+    };
+  }
+}
+```
+
+> Outcome from Postmand and Server(terminal)
+
+<img src="./img/section03-lecture035-003.png">
+<img src="./img/section03-lecture035-004.png">
+
+
+### 3. Search for an ID out of array length:
+```ts
+private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
+
+console.log(cars.length) // 6
+```
+
+#### Search for **`ID = 6`**
+1. Method: GET
+2. URL: **`http://localhost:3000/cars/6`**
+3. Status Code: **`200 OK`** ❌
+4. Response: ❌
+    ```json
+    {
+        "message": "success",
+        "id": 6
+    }
+    ```
+
+<img src="./img/section03-lecture035-005.png">
 

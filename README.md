@@ -590,3 +590,48 @@ First try with :
 
 <img src="./img/section03-lecture0.37-005.png">
 <img src="./img/section03-lecture0.37-006.png">
+
+## 📚 Lecture 038: Pipes
+
+### 1. Using **`ParseIntPipe`** for validation:
+```ts
+// ./src/cars/cars.controller.ts
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';  // 👈🏽 ✅
+import { CarsService } from './cars.service';
+
+@Controller('cars')
+export class CarsController {
+  //private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  getCarById(@Param('id', ParseIntPipe) id: number) {  // 👈🏽 ✅
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+}
+```
+
+<img src="./img/section03-lecture038-001.png">
+<img src="./img/section03-lecture038-002.png">
+
+### 2. Validation Type:
+<img src="./img/section03-lecture038-003.png">
+
+### 3. Error 500:
+
+Adding **`throw new Error('S.O.S');`**
+```ts
+  @Get(':id')
+  getCarById(@Param('id', ParseIntPipe) id: number) {
+    console.log({ id: id });
+    throw new Error('S.O.S');  // 👈🏽 ✅
+    return this.carsService.findOneById(id);
+  }
+```
+<img src="./img/section03-lecture038-004.png">
+

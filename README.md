@@ -1,3 +1,5 @@
+# 👨🏾‍💻 Section 03: First Step in NestJS
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
@@ -21,78 +23,261 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+---
+## 📚 Lecture 029: Instalar Nest CLI - Command Line Interface
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
+### 1. Install Nest globally:
+In Windows:
 ```bash
-$ npm install
+npm i -g @nestjs/cli
 ```
 
-## Compile and run the project
-
+In Mac:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+sudo npm i -g @nestjs/cli
 ```
 
-## Run tests
-
+### 2. Verif nestjs version:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+nest -v
 ```
 
-## Deployment
+## 📚 Lecture 030: Generate first project - CarDealership
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 1. Execute from terminal:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+nest new car-dealership
+npm
+```
+then:
+```bash
+？Which package manager would you ❤️ to use?
+> npm
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Expected prompt:
+```bash
+cd car-dealership
+npm start:dev
+```
 
-## Resources
 
-Check out a few resources that may come in handy when working with NestJS:
+## 📚 Lecture 031: Explanation of each file and directory
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 1. Visual Project Structure:
+```
+02-car-dealership/
+├── node_modules/                 # Project dependencies
+├── src/                          # Main source code
+│   ├── app.controller.ts         # Main controller (handles incoming requests and routes)
+│   ├── app.controller.spec.ts    # Unit tests for the main controller
+│   ├── app.service.ts            # Main service (contains business logic)
+│   ├── app.module.ts             # Root application module
+│   └── main.ts                   # Application entry point
+│
+├── test/                         # End-to-end (e2e) tests
+│   ├── app.e2e-spec.ts           # Example e2e test file
+│   └── jest-e2e.json             # Jest configuration for e2e tests
+│
+├── .eslintrc.js                  # ESLint configuration (code linting rules)
+├── .prettierrc                   # Prettier configuration (code formatting)
+├── nest-cli.json                 # Nest CLI configuration file
+├── package.json                  # Project metadata, dependencies, and scripts
+├── tsconfig.build.json           # TypeScript config for building the project
+├── tsconfig.json                 # General TypeScript configuration
+└── README.md                     # Project documentation
+```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📚 Lecture 032: Modules
 
-## Stay in touch
+### 1. Keep this project as simple for first step:
+```
+02-car-dealership/
+├── node_modules/                 # Project dependencies
+├── src/                          # Main source code
+│   ├── app.module.ts             # Root application module ✅
+│   └── main.ts                   # Application entry point
+│
+├── test/                         # End-to-end (e2e) tests
+│   ├── app.e2e-spec.ts           # Example e2e test file
+│   └── jest-e2e.json             # Jest configuration for e2e tests
+│
+├── .eslintrc.js                  # ESLint configuration (code linting rules)
+├── .prettierrc                   # Prettier configuration (code formatting)
+├── nest-cli.json                 # Nest CLI configuration file
+├── package.json                  # Project metadata, dependencies, and scripts
+├── tsconfig.build.json           # TypeScript config for building the project
+├── tsconfig.json                 # General TypeScript configuration
+└── README.md                     # Project documentation
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 2. Open **`app.module.ts`** file and update it as follows:
+```ts
+import { Module } from '@nestjs/common';
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [],
+  exports: [],
+})
+export class AppModule {
+  //...AppModule is a simple class with a decorator.
+}
+```
 
-## License
+### 3. From Postman
+1. Method: **GET**
+2. URL: **http://localhost:3000**
+3. Response:
+    ```json
+    {
+      "message": "Cannot GET /",
+      "error": "Not Found",
+      "statusCode": 404
+    }
+    ```
+4. Status: **404**    
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+    <img src="./img/section03-lecture032-001.png" >
+
+### 4. From **`http://localhost:3000`**:
+  <img src="./img/section03-lecture032-002.png" >
+
+
+## 📚 Lecture 033: Controllers
+
+
+### Execute:
+
+#### 1. In order to see command help:
+```bash
+nes -h
+```
+
+#### 2. In. order to generate **`cars.module.ts`** file:
+
+```bash
+nest g mo cars
+```
+
+> 2.1 Visual Project Structure:
+```
+02-car-dealership/
+├── node_modules/                 # Project dependencies (automatically installed via npm)
+├── src/                          # Main source code
+│   ├── cars/                     # Cars module (feature module) ✅
+│   │   └── cars.module.ts        # Module definition for cars ✅
+│   ├── app.module.ts             # Root application module
+│   └── main.ts                   # Application entry point (creates and boots the NestJS app)
+│
+├── test/                         # End-to-end (e2e) tests
+│   ├── app.e2e-spec.ts           # Example e2e test file
+│   └── jest-e2e.json             # Jest configuration for e2e tests
+│
+├── .eslintrc.js                  # ESLint configuration (code linting rules)
+├── .prettierrc                   # Prettier configuration (code formatting)
+├── nest-cli.json                 # Nest CLI configuration file
+├── package.json                  # Project metadata, dependencies, and scripts
+├── package-lock.json             # Exact dependency tree (if using npm)
+├── tsconfig.build.json           # TypeScript config for building the project
+├── tsconfig.json                 # General TypeScript configuration
+├── .env.example                  # Example environment variables file
+├── .gitignore                    # Git ignore file
+└── README.md                     # Project documentation
+```
+
+> 2.2 Verify updates in **`app.module.ts`** file:
+```ts
+import { Module } from '@nestjs/common';
+import { CarsModule } from './cars/cars.module';  // 👈🏽 ✅
+
+@Module({
+  imports: [CarsModule],  // 👈🏽 ✅
+  controllers: [],
+  providers: [],
+  exports: [],
+})
+export class AppModule {
+  //...
+}
+```
+
+#### 3. In order to **`cars.controller.ts`** file:
+
+```bash
+nest g co cars
+```
+
+> 3.1 outcome:
+```bash
+CREATE src/cars/cars.controller.spec.ts (478 bytes)
+CREATE src/cars/cars.controller.ts (97 bytes)
+UPDATE src/cars/cars.module.ts (166 bytes)
+```
+
+> 3.2 Visual Project structure:
+```
+02-car-dealership/
+│── node_modules/                      # 📦 Project dependencies
+├── src/
+│   ├── cars/                          # 🚗 Feature module - Car management
+│   │   │── cars.controller.ts         # Car CRUD operations
+│   │   │── cars.controller.spec.ts
+│   │   └── cars.module.ts             # 🧩 Car feature module
+│   ├── app.module.ts                  # 🌐 Root application module
+│   └── main.ts                        # 🚀 Application entry point
+├── test/                              # 🧪 End-to-end (e2e) tests
+│   ├── app.e2e-spec.ts                # Example e2e test file
+│   └── jest-e2e.json                  # Jest configuration for e2e tests
+│── package.json                       # 📋 Project metadata, dependencies, and scripts
+│── package-lock.json                  # 🔒 Locked dependency versions
+│── nest-cli.json                      # 🪄 Nest CLI configuration
+│── tsconfig.json                      # 📘 General TypeScript configuration
+│── tsconfig.build.json                # 🏗️ TypeScript config for building
+│── .eslintrc.js                       # ✨ ESLint configuration
+│── .prettierrc                        # 🎨 Prettier code formatting
+│── .env.example                       # 🔐 Environment variables template
+├── README.md                          # 📖 Project documentation
+└── .gitignore                         # 🙈 Git ignore rules
+```
+
+> 3.3 In **`cars.module.ts`** file:
+```ts
+import { Module } from '@nestjs/common';
+import { CarsController } from './cars.controller';  // 👈🏽 ✅
+@Module({
+  controllers: [CarsController],  // 👈🏽 ✅
+})
+export class CarsModule {}
+```
+
+> 3.4 In **`cars.controller.ts`** file:
+```ts
+import { Controller } from '@nestjs/common';
+@Controller('cars')
+export class CarsController {
+  //... nothing => 404 Not found!
+}
+```
+
+> 3.5 In Postman:
+
+<img src="./img/section03-lecture033-001.png">
+<img src="./img/section03-lecture033-002.png">
+
+
+#### 4. Add a private cars array :
+```ts
+import { Controller, Get } from '@nestjs/common';
+
+@Controller('cars')
+export class CarsController {
+  private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
+  @Get()
+  getAllCars() {
+    return this.cars;
+  }
+}
+```
+

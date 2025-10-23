@@ -440,3 +440,153 @@ export class CarsService {
 
 > There must be some errors due to missing cars array in cars.controller.ts file.
 
+## 📚 Lecture 037: Dependency Injection
+
+### 1. create **`finAll`** method in **`cars.service.ts`**:
+```ts
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class CarsService {
+  private cars = [
+    {
+      id: 1,
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: 2,
+      brand: 'Ford',
+      model: 'Mustang',
+    },
+    {
+      id: 3,
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: 4,
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: 5,
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: 6,
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+
+  findAll() {  // 👈🏽 ✅
+    return this.cars;
+  }
+}
+```
+
+### 2. Create an instance of **`cars.service`** inside **`cars.controller`** constructor.
+```ts
+import { Controller, Get } from '@nestjs/common';
+import { CarsService } from './cars.service';
+
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+}
+``` 
+
+> Outcome:
+
+<img src="./img/section03-lecture0.37-001.png">
+<img src="./img/section03-lecture0.37-002.png">
+
+### 3. create the **`findOneById()`** method:
+```ts
+// ./src/cars/cars.service.ts
+import { Injectable } from '@nestjs/common';
+@Injectable()
+export class CarsService {
+  private cars = [
+    {
+      id: 1,
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: 2,
+      brand: 'Ford', //
+      model: 'Mustang',
+    },
+    {
+      id: 3,
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: 4,
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: 5,
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: 6,
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+
+  findAll() {
+    return this.cars;
+  }
+  findOneById(id: number) {  // 👈🏽 ✅
+    return this.cars.filter((car) => car.id === id);
+  }
+}
+```
+
+```ts
+// ./src/cars/cars.controller.ts
+import { Controller, Get, Param } from '@nestjs/common';
+import { CarsService } from './cars.service';
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+  @Get(':id')
+  getCarById(@Param('id') id: number) {  // 👈🏽 ✅
+    return this.carsService.findOneById(+id);
+  }
+}
+```
+<img src="./img/section03-lecture0.37-003.png">
+<img src="./img/section03-lecture0.37-004.png">
+
+First try with :
+```ts
+  @Get(':id')
+  getCarById(@Param('id') id: number) {  // 👈🏽 ✅
+    console.log({ id: +id});
+    return this.carsService.findOneById(id); // "id" is not a number
+  }
+```
+
+### 4. Tech Debt: Need validation!
+1. Enter any ID out of array range as 8
+2. Enter any value as ID (i.e. "house")
+
+<img src="./img/section03-lecture0.37-005.png">
+<img src="./img/section03-lecture0.37-006.png">

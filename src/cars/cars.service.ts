@@ -10,7 +10,7 @@ export class CarsService {
     },
     {
       id: 2,
-      brand: 'Ford',
+      brand: 'Ford', //
       model: 'Mustang',
     },
     {
@@ -34,4 +34,12 @@ export class CarsService {
       model: 'A4',
     },
   ];
+
+  findAll() {
+    return this.cars;
+  }
+
+  findOneById(id: number) {
+    return this.cars.filter((car) => car.id === id);
+  }
 }

@@ -362,3 +362,81 @@ console.log(cars.length) // 6
 
 <img src="./img/section03-lecture035-005.png">
 
+
+## 📚 Lecture 036: Services
+
+### 1. Create **`ccars.service`** file from terminal:
+```bash
+nest g s cars --no-spec
+```
+
+> Outcome:
+```
+CREATE src/cars/cars.service.ts
+UPDATE src/cars/cars.module.ts
+```
+
+> besides:
+```ts
+// ./src/cars/cars.service.ts
+import { Injectable } from '@nestjs/common';
+@Injectable()
+export class CarsService {}
+```
+> and
+```ts
+// ./src/cars/cars.module.ts
+import { Module } from '@nestjs/common';
+import { CarsController } from './cars.controller';
+import { CarsService } from './cars.service';  // 👈🏽 ✅
+@Module({
+  controllers: [CarsController],
+  providers: [CarsService],  // 👈🏽 ✅
+})
+export class CarsModule {}
+```
+
+### 2. Move cars array from **`cars.cntroller.ts`** to **`cars.service.ts`** file:
+```ts
+// ./src/cars/cars.service.ts
+import { Injectable } from '@nestjs/common';
+@Injectable()
+export class CarsService {
+  private cars = [
+    {
+      id: 1,
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: 2,
+      brand: 'Ford',
+      model: 'Mustang',
+    },
+    {
+      id: 3,
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: 4,
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: 5,
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: 6,
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+}
+
+```
+
+> There must be some errors due to missing cars array in cars.controller.ts file.
+

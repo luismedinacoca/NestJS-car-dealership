@@ -635,3 +635,51 @@ Adding **`throw new Error('S.O.S');`**
 ```
 <img src="./img/section03-lecture038-004.png">
 
+## 📚 Lecture 039: Exception Filters
+
+### 1. visit [Exception filters in NestJS](https://docs.nestjs.com/exception-filters)
+
+
+### 2. Add **`NotFoundException()`** in **`cars.service.ts`**file:
+> In order to make an assessment regarding the out of araange.
+
+```ts
+import { Injectable, NotFoundException } from '@nestjs/common';  // 👈🏽 ✅
+@Injectable()
+export class CarsService {
+  private cars = [
+    {
+      id: 1,
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    //...
+    {
+      id: 6,
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+  findAll() {
+    return this.cars;
+  }
+  findOneById(id: number) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException();  // 👈🏽 ✅
+    return car;
+  }
+}
+```
+
+<img src="./img/section03-lecture039-001.png">
+
+
+### 3. Customize response message:
+```ts
+//...
+  findOneById(id: number) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${ id }' was not found!`);  // 👈🏽 ✅
+    return car;
+  }
+```

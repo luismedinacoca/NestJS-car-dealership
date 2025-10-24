@@ -818,3 +818,20 @@ export class CarsController {
 }
 ```
 <img src="./img/section03-lecture040-004.png">
+
+--- 
+# 👨🏾‍💻 Section 04: DTOs and validation of information
+
+
+## 📚 Lecture 043: Section topics
+
+```
+DTO (Data Transfer Object)
+- Patch, Post, Delete
+- Automatic validations
+- Class Validator
+- Class Transformer
+- Follow the DRY principle (Don’t Repeat Yourself)
+- Some useful decorators from Class Validator
+```
+

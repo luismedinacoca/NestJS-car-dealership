@@ -683,3 +683,138 @@ export class CarsService {
   }
 ```
 <img src="./img/section03-lecture039-002.png">
+
+## 📚 Lecture 040: Post, Patch y Delete
+
+### 1. Create first **`POST`** in **`cars.controller.ts`** file:
+```ts
+import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';  // 👈🏽 ✅
+import { CarsService } from './cars.service';
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+  @Get(':id')
+  getCarById(@Param('id', ParseIntPipe) id: number) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+  @Post()  // 👈🏽 ✅
+  createCar() {
+    return {
+      ok: true,
+      method: 'POST',
+    };
+  }
+}
+```
+
+<img src="./img/section03-lecture040-001.png">
+
+
+#### With Payoad:
+```ts
+  //...
+  @Post()  // 👈🏽 ✅
+  createCar(@Body() payload: any) {
+    return payload;
+  }
+```
+<img src="./img/section03-lecture040-002.png">
+
+#### 🚧 Validation requirements:
+- Key validation names and format.
+- Key name values validation
+
+### 2. Create first **`PATCH`** in **`cars.controller.ts`** file:
+
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Body,
+  Patch,  // 👈🏽 ✅
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+
+@Controller('cars')
+export class CarsController {
+  //private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  getCarById(@Param('id', ParseIntPipe) id: number) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  createCar(@Body() payload: any) {
+    return payload;
+  }
+
+  @Patch(':id')  // 👈🏽 ✅
+  updateCar(@Param('id', ParseIntPipe) id: number, @Body() payload: any) {
+    return payload;
+  }
+}
+```
+
+<img src="./img/section03-lecture040-003.png">
+
+#### Misssing validations:
+
+### 3. First **`DELETE`** in **`cars.controller.ts`** file:
+
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Body,
+  Patch,
+  Delete,  // 👈🏽 ✅
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+  @Get(':id')
+  getCarById(@Param('id', ParseIntPipe) id: number) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+  @Post()
+  createCar(@Body() payload: any) {
+    return payload;
+  }
+  @Patch(':id')
+  updateCar(@Param('id', ParseIntPipe) id: number, @Body() payload: any) {
+    return payload;
+  }
+  @Delete(':id')  // 👈🏽 ✅
+  deleteCar(@Param('id', ParseIntPipe) id: number) {
+    return {
+      method: 'delete',
+      id,
+    };
+  }
+}
+```
+<img src="./img/section03-lecture040-004.png">

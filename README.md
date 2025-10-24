@@ -673,7 +673,6 @@ export class CarsService {
 
 <img src="./img/section03-lecture039-001.png">
 
-
 ### 3. Customize response message:
 ```ts
 //...
@@ -683,3 +682,4 @@ export class CarsService {
     return car;
   }
 ```
+<img src="./img/section03-lecture039-002.png">

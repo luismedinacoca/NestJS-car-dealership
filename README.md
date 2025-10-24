@@ -835,3 +835,8 @@ DTO (Data Transfer Object)
 - Some useful decorators from Class Validator
 ```
 
+## 📚 Lecture 044: continuing with the previous section.
+
+Remember, those endpoint have been already created and the terminal displays them:
+
+<img src="./img/section04-lecture044-001.png">

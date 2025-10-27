@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
+  //ParseIntPipe,
   Post,
   Body,
   Patch,
@@ -20,23 +20,25 @@ export class CarsController {
   }
 
   @Get(':id')
-  getCarById(@Param('id', ParseIntPipe) id: number) {
+  getCarById(@Param('id') id: string) {
     console.log({ id: id });
     return this.carsService.findOneById(id);
   }
 
   @Post()
   createCar(@Body() payload: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return payload;
   }
 
   @Patch(':id')
-  updateCar(@Param('id', ParseIntPipe) id: number, @Body() payload: any) {
+  updateCar(@Param('id') id: string, @Body() payload: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return payload;
   }
 
   @Delete(':id')
-  deleteCar(@Param('id', ParseIntPipe) id: number) {
+  deleteCar(@Param('id') id: string) {
     return {
       method: 'delete',
       id,

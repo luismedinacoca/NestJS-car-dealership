@@ -840,3 +840,245 @@ DTO (Data Transfer Object)
 Remember, those endpoint have been already created and the terminal displays them:
 
 <img src="./img/section04-lecture044-001.png">
+
+## 📚 Lecture 045: Interfaces & UUID
+
+### 1.  Create **`car.interface.ts`** file:
+```ts
+// ./src/cars/interfaces/car.interface.ts
+export interface Car {
+  id: number;
+  brand: string;
+  model: string;
+}
+```
+
+### 2. Export **`car.interface.ts`** to **`cars.service.ts`** file:
+```ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/car.interface';. // 👈🏽 ✅
+@Injectable()
+export class CarsService {
+  private cars: Car[] = [  // 👈🏽 ✅
+    {
+      id: 1,
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: 2,
+      brand: 'Ford', //
+      model: 'Mustang',
+    },
+    {
+      id: 3,
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: 4,
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: 5,
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: 6,
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+  findAll() {
+    return this.cars;
+  }
+  findOneById(id: number) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+}
+```
+
+### 3. Installing **`uuid`**:
+```bash
+npm i uuid
+npm i --save-dev @types/uuid
+```
+
+### 4. Change **`id`** data type:
+
+#### 1. Change id:
+```ts
+// ./src/cars/interfaces/car.interface.ts
+export interface Car {
+  id: string; // 👈🏽 ✅
+  brand: string;
+  model: string;
+}
+```
+
+#### 2. Add **`uuid()`** function in each **`id`**:
+```ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+@Injectable()
+export class CarsService {
+  private cars: Car[] = [
+    {
+      id: uuid(),  // 👈🏽 ✅
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: uuid(),  // 👈🏽 ✅
+      brand: 'Ford', //
+      model: 'Mustang',
+    },
+    {
+      id: uuid(),  // 👈🏽 ✅
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: uuid(),  // 👈🏽 ✅
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: uuid(),  // 👈🏽 ✅
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: uuid(),  // 👈🏽 ✅
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+  findAll() {
+    return this.cars;
+  }
+  findOneById(id: number) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+}
+```
+
+#### 3. Update **`cars.controller.ts`** and **`cars.service.ts`**
+1. **`cars.controller.ts`**
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  //ParseIntPipe,
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+
+@Controller('cars')
+export class CarsController {
+  //private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  getCarById(@Param('id') id: string) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  createCar(@Body() payload: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return payload;
+  }
+
+  @Patch(':id')
+  updateCar(@Param('id') id: string, @Body() payload: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return payload;
+  }
+
+  @Delete(':id')
+  deleteCar(@Param('id') id: string) {
+    return {
+      method: 'delete',
+      id,
+    };
+  }
+}
+
+```
+
+2. **`cars.service.ts`**
+```ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuid } from 'uuid';
+
+@Injectable()
+export class CarsService {
+  private cars: Car[] = [
+    {
+      id: uuid(),
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: uuid(),
+      brand: 'Ford', //
+      model: 'Mustang',
+    },
+    {
+      id: uuid(),
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: uuid(),
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: uuid(),
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: uuid(),
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+
+  findAll() {
+    return this.cars;
+  }
+
+  findOneById(id: string) {  // 👈🏽 ✅
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+}
+
+```
+
+* Run in the terminal:
+  ```bash
+  npm run start:dev
+  ```
+
+* Go to browser and open this [URL](http://localhost:3000/cars)

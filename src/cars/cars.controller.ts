@@ -10,6 +10,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';
 
 @Controller('cars')
 export class CarsController {
@@ -28,9 +29,8 @@ export class CarsController {
   }
 
   @Post()
-  createCar(@Body() payload: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return payload;
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return createCarDto;
   }
 
   @Patch(':id')

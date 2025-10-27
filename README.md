@@ -1132,3 +1132,80 @@ export class CarsController {
   }
 }
 ```
+
+## 📚 Lecture 047: DTO - Data Transfer Object
+
+### 1. 💥 Request from Postman:
+1. Method: **`POST`**
+2. URL: **`http://localhost:3000/cars`**
+3. Payload:
+```json
+{
+  "brand": "Volvo",
+  "modeL": "XC41",
+  "banana": true,
+  "doors": 3
+}
+```
+<img src="./img/section04-lecture047-001.png">
+
+### 2. Create **`DTO`** file:
+```ts
+// ./src/cars/dto/create-dto.ts
+export class CreateCarDto {
+  readonly brand: string;
+
+  readonly model: string;
+}
+```
+
+Meanwhile in **`cars.controller.ts`** file:
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  //ParseIntPipe,
+  ParseUUIDPipe,
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';  // 👈🏽 ✅
+
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  //getCarById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  getCarById(@Param('id', ParseUUIDPipe) id: string) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  createCar(@Body() createCarDto: CreateCarDto) {  // 👈🏽 ✅
+    return createCarDto;
+  }
+
+  @Patch(':id')
+  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() payload: any) {
+    return payload;
+  }
+
+  @Delete(':id')
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return {
+      method: 'delete',
+      id,
+    };
+  }
+}
+```

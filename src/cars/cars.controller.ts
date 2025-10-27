@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   //ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Body,
   Patch,
@@ -20,7 +21,8 @@ export class CarsController {
   }
 
   @Get(':id')
-  getCarById(@Param('id') id: string) {
+  //getCarById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  getCarById(@Param('id', ParseUUIDPipe) id: string) {
     console.log({ id: id });
     return this.carsService.findOneById(id);
   }
@@ -32,13 +34,13 @@ export class CarsController {
   }
 
   @Patch(':id')
-  updateCar(@Param('id') id: string, @Body() payload: any) {
+  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() payload: any) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return payload;
   }
 
   @Delete(':id')
-  deleteCar(@Param('id') id: string) {
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
     return {
       method: 'delete',
       id,

@@ -1209,3 +1209,105 @@ export class CarsController {
   }
 }
 ```
+
+## 📚 Lecture 048: ValidationPipe - Class Validator & Class Transformer
+
+### 1. Install **`class-validator`** & **`class-transform`** dependencies:
+```bash
+npm install class-validator class-transform
+```
+
+### 2. Add decorator in **`create-car.dto.ts`** file:
+```ts
+import { IsString } from 'class-validator';
+export class CreateCarDto {
+  @IsString()
+  readonly brand: string;
+  @IsString()
+  readonly model: string;
+}
+```
+
+Make a postman request:
+1. Method: **`POST`**
+2. URL: *http://localhost:3000/cars*
+3. Payload:
+    ```json
+    {
+      "brand": "Volvo",
+      "modeL": "XC40",
+      "doors": 3
+    }
+    ```
+4. Response:
+  <img src="./img/section04-lecture048-001.png">
+
+
+### 3. Customized message:
+```ts
+import { IsString } from 'class-validator';
+
+export class CreateCarDto {
+  @IsString({ message: 'The brand must be a cool string' })  // 👈🏽 ✅
+  readonly brand: string;
+  @IsString({ message: 'Model is mandatory' })
+  readonly model: string;
+}
+```
+<img src="./img/section04-lecture048-002.png">
+
+### 4. Validation for each request - DRY
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  //ParseIntPipe,
+  ParseUUIDPipe,
+  UsePipes,  //👈🏽 ✅
+  ValidationPipe,  //👈🏽 ✅
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';
+
+@Controller('cars')
+@UsePipes(ValidationPipe)  //👈🏽 ✅
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  //getCarById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  getCarById(@Param('id', ParseUUIDPipe) id: string) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return createCarDto;
+  }
+
+  @Patch(':id')
+  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() payload: any) {
+    return payload;
+  }
+
+  @Delete(':id')
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return {
+      method: 'delete',
+      id,
+    };
+  }
+}
+```
+
+> Need improvement!

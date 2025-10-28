@@ -4,6 +4,8 @@ import {
   Param,
   //ParseIntPipe,
   ParseUUIDPipe,
+  UsePipes,
+  ValidationPipe,
   Post,
   Body,
   Patch,
@@ -13,6 +15,7 @@ import { CarsService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
 
 @Controller('cars')
+@UsePipes(ValidationPipe)
 export class CarsController {
   //private cars = ['Toyota', 'Ford', 'Chevrolet', 'BMW', 'Mercedes', 'Audi'];
   constructor(private readonly carsService: CarsService) {}

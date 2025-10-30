@@ -1311,3 +1311,126 @@ export class CarsController {
 ```
 
 > Need improvement!
+
+## 📚 Lecture 049: Global Pipes - At the Application Level
+
+### 1. Comment **`@UsePipes(ValidationPipe)`** at **`@Post`** and **`Controller`** levels:
+```ts
+/******* ./src/cars/cars.controller.ts *******/
+import {
+  Controller,
+  Get,
+  Param,
+  //ParseIntPipe,
+  ParseUUIDPipe,
+  //UsePipes,  // 👈🏽 ✅
+  //ValidationPipe,  // 👈🏽 ✅
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';
+
+@Controller('cars')
+//@UsePipes(ValidationPipe)  // 👈🏽 ✅
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  getCarById(@Param('id', ParseUUIDPipe) id: string) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  //@UsePipes(ValidationPipe)  // 👈🏽 ✅
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return createCarDto;
+  }
+
+  @Patch(':id')
+  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() payload: any) {
+    return payload;
+  }
+
+  @Delete(':id')
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return {
+      method: 'delete',
+      id,
+    };
+  }
+}
+```
+
+### 2. Adding the validation in **`src/main.ts`** file:
+```ts
+/******* .src/main.ts *******/
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+async function main() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(process.env.PORT ?? 3000);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      //whitelist: true,
+      //forbidNonWhitelisted: true,
+    }),
+  );
+}
+main();
+```
+
+#### 2.1 With **`whitelist:true`** and **`forbidNonWhitelisted: true`** commented:
+```ts
+  app.useGlobalPipes(
+    new ValidationPipe({
+      //whitelist: true,
+      //forbidNonWhitelisted: true,
+    }),
+  );
+```
+<img src="./img/section04-lecture049-001.png">
+
+#### 2.2 With **`forbidNonWhitelisted: true`** commented only:
+```ts
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      //forbidNonWhitelisted: true,
+    }),
+  );
+```
+<img src="./img/section04-lecture049-002.png">
+
+#### 2.3 Neither **`whitelist:true`** nor **`forbidNonWhitelisted: true`** commented:
+```ts
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+```
+<img src="./img/section04-lecture049-003.png">
+
+### 3. Adding a new **`decorator`**:
+```ts
+// ./src/cars/dto/create-car.dto.ts
+import { IsString, MinLength } from 'class-validator';
+export class CreateCarDto {
+  @IsString({ message: 'The brand must be a cool string' })
+  readonly brand: string;
+
+  @IsString({ message: 'Model is mandatory' })
+  @MinLength(3)  // 👈🏽✅
+  readonly model: string;
+}
+```

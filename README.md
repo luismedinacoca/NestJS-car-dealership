@@ -1579,8 +1579,157 @@ or
 ```
 
 
+## 📚 Lecture 051: Update a car
 
+1. In case you want to update an existent car, you'll find the validation regarding brand and model and both are mandatory. due to CreateCarDto. 
 
+2. Need to add a new CarDto.
+
+### 1. create **`update-car.dto.ts`**
+```ts
+// ./src/cars/dto/update-car.dto.ts
+import { IsString, IsUUID, MinLength, IsOptional } from 'class-validator';
+export class UpdateCarDto {
+  @IsString()
+  @IsUUID() // 👈🏽 ✅
+  @IsOptional() // 👈🏽 ✅
+  readonly id?: string; // 👈🏽 ✅ it's optional for Interface rule.
+
+  @IsString({ message: 'The brand must be a cool string' })
+  @IsOptional() // 👈🏽 ✅
+  readonly brand?: string; // 👈🏽 ✅ it's optional for Interface rule.
+
+  @IsString({ message: 'Model is mandatory' })
+  @IsOptional() // 👈🏽 ✅
+  @MinLength(3)
+  readonly model?: string; // 👈🏽 ✅ it's optional for Interface rule.
+}
+```
+
+### 2. Working on **`CarsController.ts`**:
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarDto } from './dto/update-car.dto'; // 👈🏽 ✅
+
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  getCarById(@Param('id', ParseUUIDPipe) id: string) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return this.carsService.create(createCarDto);
+  }
+
+  @Patch(':id')
+  updateCar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,  // 👈🏽 ✅
+  ) {
+    return updateCarDto;
+  }
+
+  @Delete(':id')
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return {
+      method: 'delete',
+      id,
+    };
+  }
+}
+```
+
+### 3. create **`index.js`** in **`./src/cars/dto/`** folder:
+```ts
+export { CreateCarDto } from './create-car.dto';
+export { UpdateCarDto } from './update-car.dto';
+```
+In order to get better and shoter car.dto references.
+
+### 4. add **`update`** method in **`cars.service.ts`** file:
+```ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuid } from 'uuid';
+import { CreateCarDto, UpdateCarDto } from './dto';  //👈🏽 ✅
+
+@Injectable()
+export class CarsService {
+  private cars: Car[] = [
+    {
+      id: uuid(),
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: uuid(),
+      brand: 'Ford', //
+      model: 'Mustang',
+    },
+    {
+      id: uuid(),
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: uuid(),
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: uuid(),
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: uuid(),
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+
+  findAll() {
+    return this.cars;
+  }
+
+  findOneById(id: string) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+
+  create(createCarDto: CreateCarDto) {
+    const car: Car = {
+      id: uuid(),
+      ...createCarDto,
+    };
+    this.cars.push(car);
+    return car;
+  }
+
+  update(id: string, updateCarDto: UpdateCarDto) {}  //👈🏽 ✅
+}
+```
 
 
 

@@ -1434,3 +1434,154 @@ export class CreateCarDto {
   readonly model: string;
 }
 ```
+<img src="./img/section04-lecture049-004.png">
+
+## 📚 Lecture 050: create a new car
+
+### 1. Inject cars.service into cars.controller:
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';
+
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  getCarById(@Param('id', ParseUUIDPipe) id: string) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return this.carsService.create(createCarDto);  // 👈🏽 ✅
+  }
+
+  @Patch(':id')
+  updateCar(@Param('id', ParseUUIDPipe) id: string, @Body() payload: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return payload;
+  }
+
+  @Delete(':id')
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return {
+      method: 'delete',
+      id,
+    };
+  }
+}
+```
+
+### 2. Working on **`cars.service`**:
+```ts:
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuid } from 'uuid';
+import { CreateCarDto } from './dto/create-car.dto';
+
+@Injectable()
+export class CarsService {
+  private cars: Car[] = [
+    {
+      id: uuid(),
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: uuid(),
+      brand: 'Ford', //
+      model: 'Mustang',
+    },
+    {
+      id: uuid(),
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: uuid(),
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: uuid(),
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: uuid(),
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+
+  findAll() {
+    return this.cars;
+  }
+
+  findOneById(id: string) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+
+  create(createCarDto: CreateCarDto) {
+    const car: Car = {
+      id: uuid(),
+      brand: createCarDto.brand,  // 👈🏽 ✅
+      model: createCarDto.model  // 👈🏽 ✅
+    };
+    this.cars.push(car);
+    return car;
+  }
+}
+```
+or
+
+```ts
+  create({ brand, model }: CreateCarDto) {  // 👈🏽 ✅
+    const car: Car = {
+      id: uuid(),
+      brand,  // 👈🏽 ✅
+      model  // 👈🏽 ✅
+    };
+    this.cars.push(car);
+    return car;
+  }
+```
+
+or
+
+```ts
+  create(createCarDto: CreateCarDto) {
+    const car: Car = {
+      id: uuid(),
+      ...createCarDto  // 👈🏽 ✅
+    };
+    this.cars.push(car);
+    return car;
+  }
+```
+
+
+
+
+
+
+
+

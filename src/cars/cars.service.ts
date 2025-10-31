@@ -76,4 +76,11 @@ export class CarsService {
     });
     return carDB;
   }
+
+  delete(id: string) {
+    const car = this.findOneById(id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    this.cars = this.cars.filter((car) => car.id !== id);
+    return car;
+  }
 }

@@ -1854,5 +1854,148 @@ update(id: string, updateCarDto: UpdateCarDto) {
 ```
 
 
-## 📚 Lecture 0
+## 📚 Lecture 053: Delete a car
+
+### 1. Meanwhile in **`cars.controllers.ts`** file:
+```ts
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
+import { CarsService } from './cars.service';
+import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarDto } from './dto/update-car.dto';
+
+@Controller('cars')
+export class CarsController {
+  constructor(private readonly carsService: CarsService) {}
+  @Get()
+  getAllCars() {
+    return this.carsService.findAll();
+  }
+
+  @Get(':id')
+  getCarById(@Param('id', ParseUUIDPipe) id: string) {
+    console.log({ id: id });
+    return this.carsService.findOneById(id);
+  }
+
+  @Post()
+  createCar(@Body() createCarDto: CreateCarDto) {
+    return this.carsService.create(createCarDto);
+  }
+
+  @Patch(':id')
+  updateCar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
+    return this.carsService.update(id, updateCarDto);
+  }
+
+  @Delete(':id')
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return this.carsService.delete(id);  // 👈🏽 ✅
+  }
+}
+```
+
+### 2. Updating the **`cars.service.ts`**
+```ts
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuid } from 'uuid';
+import { CreateCarDto, UpdateCarDto } from './dto';
+
+@Injectable()
+export class CarsService {
+  private cars: Car[] = [
+    {
+      id: uuid(),
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: uuid(),
+      brand: 'Ford', //
+      model: 'Mustang',
+    },
+    {
+      id: uuid(),
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: uuid(),
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: uuid(),
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: uuid(),
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+
+  findAll() {
+    return this.cars;
+  }
+
+  findOneById(id: string) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+
+  create(createCarDto: CreateCarDto) {
+    const car: Car = {
+      id: uuid(),
+      ...createCarDto,
+    };
+    this.cars.push(car);
+    return car;
+  }
+
+  update(id: string, updateCarDto: UpdateCarDto) {
+    let carDB = this.findOneById(id);
+
+    if (updateCarDto.id && updateCarDto.id !== id)
+      throw new BadRequestException(`Car ID is not valid inside body`);
+
+    this.cars = this.cars.map((car) => {
+      if (car.id === id) {
+        carDB = { ...carDB, ...updateCarDto, id };
+        return carDB;
+      }
+      return car;
+    });
+    return carDB;
+  }
+
+  delete(id: string) {  // 👈🏽 ✅
+    const car = this.findOneById(id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+
+    this.cars = this.cars.filter((car) => car.id !== id);
+    return car;
+  }
+}
+```
+
+
 

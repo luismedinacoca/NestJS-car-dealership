@@ -1731,6 +1731,128 @@ export class CarsService {
 }
 ```
 
+## 📚 Lecture 052: Update car list
+
+### 1. Meanwhile in **`cars.controller.ts`**:
+```ts
+  @Patch(':id')
+  updateCar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
+    return this.carsService.update(id, updateCarDto);  // 👈🏽 ✅
+  }
+```
+
+### 2. Working on **`cars.service.ts`**:
+```ts
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuid } from 'uuid';
+import { CreateCarDto, UpdateCarDto } from './dto';
+
+@Injectable()
+export class CarsService {
+  private cars: Car[] = [
+    {
+      id: uuid(),
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+    {
+      id: uuid(),
+      brand: 'Ford',
+      model: 'Mustang',
+    },
+    {
+      id: uuid(),
+      brand: 'Chevrolet',
+      model: 'Camaro',
+    },
+    {
+      id: uuid(),
+      brand: 'BMW',
+      model: 'X5',
+    },
+    {
+      id: uuid(),
+      brand: 'Mercedes',
+      model: 'C63',
+    },
+    {
+      id: uuid(),
+      brand: 'Audi',
+      model: 'A4',
+    },
+  ];
+
+  findAll() {
+    return this.cars;
+  }
+
+  findOneById(id: string) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+
+  create(createCarDto: CreateCarDto) {
+    const car: Car = {
+      id: uuid(),
+      ...createCarDto,
+    };
+    this.cars.push(car);
+    return car;
+  }
+
+  update(id: string, updateCarDto: UpdateCarDto) {
+    //It gathers all the properties from the original car (the one in the array)
+    let carDB = this.findOneById(id);
+
+    this.cars = this.cars.map((car) => {
+      if (car.id === id) {
+        /*
+        - First, the original car is copied
+        - Then, the changes from the DTO are applied (overwriting what's necessary)
+        */
+        carDB = { ...carDB, ...updateCarDto };
+        return carDB;
+      }
+      return car;
+    });
+    return carDB;
+  }
+}
+```
+
+### 3. **`ID`** validation in **`cars.service.ts`**:
+```ts
+update(id: string, updateCarDto: UpdateCarDto) {
+    let carDB = this.findOneById(id);
+
+    if (updateCarDto.id && updateCarDto.id !== id)
+      throw new BadRequestException(`Car ID is not valid inside body`);
+
+    this.cars = this.cars.map((car) => {
+      if (car.id === id) {
+        /*
+        - First, the original car is copied
+        - Then, the changes from the DTO are applied (overwriting what's necessary).
+        - Finally, it makes sure the ID never change! (due to previous if-block)
+        */
+        carDB = { ...carDB, ...updateCarDto, id };
+        return carDB;
+      }
+      return car;
+    });
+    return carDB;
+  }
+```
 
 
+## 📚 Lecture 0
 

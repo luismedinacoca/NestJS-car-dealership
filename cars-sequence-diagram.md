@@ -112,3 +112,4 @@ sequenceDiagram
 5. **Service** retorna resultado al **Controller**
 6. **Controller** retorna respuesta HTTP al **Cliente**
 
+

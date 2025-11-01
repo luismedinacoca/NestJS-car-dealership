@@ -2020,7 +2020,162 @@ nest g res brands --no-spec
 <img src="./img/section05-lecture059-004.png">
 
 
+## 📚 Lecture 060: Complete CRUD for Brands
+
+### 1. Update **`brand.entity.ys`** file:
+```ts
+// ./src/brands/entities/brand.entity.ts
+export class Brand {
+  id: string;
+  name: string;
+
+  createdAt?: number;
+  updatedAt?: number;
+} 
+/*
+This class is named Brand because when it connects to any database through any ORM for SQL or MongoDB, if it were named BrandEntity, that name would be used as the entity name instead of just Brand.
+*/
+```
+
+### 2. Update **`create-brand.dto.ts`** file:
+```ts
+// ./src/brands/dto/create-brand.dto.ts
+import { IsString, MinLength } from 'class-validator';
+
+export class CreateBrandDto {
+  @IsString()
+  @MinLength(1)
+  name: string;
+}
+```
+
+### 3. Update **`update-brand.dto.ts`** file:
+```ts
+// ./src/brands/dto/update-brand.dto.ts
+import { PartialType } from '@nestjs/swagger';
+import { CreateBrandDto } from './create-brand.dto';
+import { IsString, MinLength } from 'class-validator';
+export class UpdateBrandDto extends PartialType(CreateBrandDto) {
+  @IsString()
+  @MinLength(1)
+  name: string;
+}
+```
+
+### 4. Update **`brands.controller.ts`** file:
+```ts
+// ./src/brands/brands.controller.ts
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,  // 👈🏽 ✅
+} from '@nestjs/common';
+import { BrandsService } from './brands.service';
+import { CreateBrandDto } from './dto/create-brand.dto';
+import { UpdateBrandDto } from './dto/update-brand.dto';
+
+@Controller('brands')
+export class BrandsController {
+  constructor(private readonly brandsService: BrandsService) {}
+
+  @Post()
+  create(@Body() createBrandDto: CreateBrandDto) {
+    return this.brandsService.create(createBrandDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.brandsService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {  // 👈🏽 ✅
+    return this.brandsService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string,  // 👈🏽 ✅
+    @Body() updateBrandDto: UpdateBrandDto,
+  ) {
+    return this.brandsService.update(id, updateBrandDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {  // 👈🏽 ✅
+    return this.brandsService.remove(id);  // 👈🏽 ✅
+  }
+}
+```
+
+### 5. Update **`brands.service.ts`** file:
+```ts
+// ./src/brands/brands.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+import { Brand } from './entities/brand.entity';
+import { CreateBrandDto } from './dto/create-brand.dto';
+import { UpdateBrandDto } from './dto/update-brand.dto';
+
+@Injectable()
+export class BrandsService {
+  private brands: Brand[] = [
+    {
+      id: uuid(),
+      name: 'Toyota',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+    },
+  ];
+
+  create(createBrandDto: CreateBrandDto) {
+    const { name } = createBrandDto;
+    const brand: Brand = {
+      id: uuid(),
+      name,
+      createdAt: new Date().getTime(),
+    };
+
+    this.brands.push(brand);
+    return brand;
+  }
+
+  findAll() {
+    return this.brands;
+  }
+
+  findOne(id: string) {
+    const brand = this.brands.find((brand) => brand.id === id);
+    if (!brand) throw new NotFoundException(`Brand with id "${id} not found"`);
+    return brand;
+  }
+
+  update(id: string, updateBrandDto: UpdateBrandDto) {
+    let brandDB = this.findOne(id);
+    this.brands = this.brands.map((brand) => {
+      if (brand.id === id) {
+        brand.updatedAt = new Date().getTime();
+        brandDB = { ...brandDB, ...updateBrandDto, id };
+        return brandDB;
+      }
+      return brand;
+    });
+    return brandDB;
+  }
+
+  remove(id: string) {
+    this.findOne(id);
+    this.brands = this.brands.filter((brand) => brand.id !== id);
+    return `This action removes a #${id} brand`;
+  }
+}
+```
 
 
-
+## 📚 Lecture 0
 ## 📚 Lecture 0

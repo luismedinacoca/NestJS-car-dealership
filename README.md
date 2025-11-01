@@ -1998,4 +1998,29 @@ export class CarsService {
 ```
 
 
+# 👨🏾‍💻 Section 05: Nest CLI Resource - Brands CRUD
 
+## 📚 Lecture 059: Nest CLI Resource - Brands
+
+### 1. Asking for help interminal
+Run in terminal:
+```bash
+nest -h
+```
+<img src="./img/section05-lecture059-001.png">
+
+### 2. Generate the **`brands`** resource:
+```bash
+nest g res brands --no-spec
+```
+<img src="./img/section05-lecture059-002.png">
+<img src="./img/section05-lecture059-003.png">
+
+#### 1. Brands folder create:
+<img src="./img/section05-lecture059-004.png">
+
+
+
+
+
+## 📚 Lecture 0

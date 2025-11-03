@@ -2459,6 +2459,80 @@ In **`brands.service.ts`** file:
   }
 ```
 
+## 📚 Lecture 063: Inject Services into other services
+
+### 1. Main idea - Inject carsService & brandsService to SeedService:
+```ts
+// ./src/seed/seed.service.ts
+import { Injectable } from '@nestjs/common';
+import { CarsService } from 'src/cars/cars.service';
+import { BrandsService } from 'src/brands/brands.service';
+import { CARS_SEED } from './data/cars.seed';
+import { BRANDS_SEED } from './data/brands.seed';
+@Injectable()
+export class SeedService {
+  constructor(
+    private readonly carsService: CarsService,  // 👈🏽 ✅
+    private readonly brandsService: BrandsService,  // 👈🏽 ✅
+  ) {}
+  populateDB() {
+    this.carsService.fillCarWithSeedData(CARS_SEED);
+    this.brandsService.fillBrandWithSeedData(BRANDS_SEED);
+    return 'SEED executed successfully!';
+  }
+}
+```
+
+### 2. In order to have CarsService and BrandsService available, they'll be exported from each of its own module:
+```ts
+// ./src/cars/cars.module.ts
+import { Module } from '@nestjs/common';
+import { CarsController } from './cars.controller';
+import { CarsService } from './cars.service';
+
+@Module({
+  controllers: [CarsController],
+  providers: [CarsService],
+  exports: [CarsService],  // 👈🏽 ✅ 💥
+})
+export class CarsModule {}
+```
+and 
+```ts
+import { Module } from '@nestjs/common';
+import { BrandsService } from './brands.service';
+import { BrandsController } from './brands.controller';
+@Module({
+  controllers: [BrandsController],
+  providers: [BrandsService],
+  exports: [BrandsService],  // 👈🏽 ✅ 💥
+})
+export class BrandsModule {}
+```
+
+### 3. They both services must be imported from SeedsModule:
+```ts
+// ./src/seed/seed.module.ts
+import { Module } from '@nestjs/common';
+import { SeedService } from './seed.service';
+import { SeedController } from './seed.controller';
+import { BrandsModule } from 'src/brands/brands.module';
+import { CarsModule } from 'src/cars/cars.module';
+@Module({
+  controllers: [SeedController],
+  providers: [SeedService],
+  imports: [CarsModule, BrandsModule],  // 👈🏽 ✅ 💥
+})
+export class SeedModule {}
+```
+
+<img src="./img/section05-lecture063-001.png">
+<img src="./img/section05-lecture063-002.png">
+<img src="./img/section05-lecture063-003.png">
+
+
+
+
 
 ## 📚 Lecture 0
 ## 📚 Lecture 0

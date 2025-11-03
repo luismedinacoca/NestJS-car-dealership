@@ -84,7 +84,7 @@ export class CarsService {
     return car;
   }
 
-  fillCarWithSeedData(cars: Car[]){
-    this.cars = cars,
+  fillCarWithSeedData(cars: Car[]) {
+    this.cars = cars;
   }
 }

@@ -2526,9 +2526,22 @@ import { CarsModule } from 'src/cars/cars.module';
 export class SeedModule {}
 ```
 
-<img src="./img/section05-lecture063-001.png">
-<img src="./img/section05-lecture063-002.png">
-<img src="./img/section05-lecture063-003.png">
+From POSTMAN:
+1. Load Seed:
+- Method: **GET**
+- URL: **`http://localhost:3000/seed`**
+- <img src="./img/section05-lecture063-001.png">
+
+
+2. Load/create cars data:
+- Method: **GET**
+- URL: **`http://localhost/3000/cars`**
+- <img src="./img/section05-lecture063-002.png">
+
+3. Load/create brand data:
+- Method: **GET**
+- URL: **`http://localhost/3000/brands`**
+- <img src="./img/section05-lecture063-003.png">
 
 
 

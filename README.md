@@ -2129,7 +2129,6 @@ export class BrandsService {
       id: uuid(),
       name: 'Toyota',
       createdAt: new Date().getTime(),
-      updatedAt: new Date().getTime(),
     },
   ];
 
@@ -2175,6 +2174,7 @@ export class BrandsService {
   }
 }
 ```
+
 
 
 ## 📚 Lecture 0

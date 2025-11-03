@@ -19,7 +19,7 @@ export class BrandsService {
     const { name } = createBrandDto;
     const brand: Brand = {
       id: uuid(),
-      name,
+      name: name.toLocaleLowerCase(),
       createdAt: new Date().getTime(),
     };
 

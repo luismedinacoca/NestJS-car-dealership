@@ -2351,6 +2351,113 @@ Testing from **Postman/Insomnia**:
 <img src="./img/section05-lecture061-001.png">
 
 
+## 📚 Lecture 062: Prepare services to insert SEED
+
+### 1. create:
+- **`seed/data/cars.seed.ts`** file.
+- **`seed/data/brands.seed.ts`** file.
+
+
+### 2. Populate the previous files as:
+```ts
+// ./src/seed/data/cars.seed.ts
+import { v4 as uuid } from 'uuid';
+import { Car } from '../../cars/interfaces/car.interface';
+export const CARS_SEED: Car[] = [
+  {
+    id: uuid(),
+    brand: 'Toyota',
+    model: 'Corolla',
+  },
+  {
+    id: uuid(),
+    brand: 'Ford',
+    model: 'Mustang',
+  },
+  {
+    id: uuid(),
+    brand: 'Chevrolet',
+    model: 'Camaro',
+  },
+  {
+    id: uuid(),
+    brand: 'BMW',
+    model: 'X5',
+  },
+  {
+    id: uuid(),
+    brand: 'Mercedes',
+    model: 'C63',
+  },
+  {
+    id: uuid(),
+    brand: 'Audi',
+    model: 'A4',
+  },
+];
+```
+
+and
+```ts
+// ./src/seed/data/brands.seed.ts
+import { v4 as uuid } from 'uuid';
+import { Brand } from '../../brands/entities/brand.entity';
+export const BRANDS_SEED: Brand[] = [
+  {
+    id: uuid(),
+    name: 'Toyota',
+  },
+  {
+    id: uuid(),
+    name: 'Ford',
+  },
+  {
+    id: uuid(),
+    name: 'Chevrolet',
+  },
+  {
+    id: uuid(),
+    name: 'BMW',
+  },
+  {
+    id: uuid(),
+    name: 'Mercedes',
+  },
+  {
+    id: uuid(),
+    name: 'Audi',
+  },
+];
+```
+
+### 3. Import **`CARS_SEED`** & **`BRANDS_SEED`** into  **`sseed.service.ts`**
+```ts
+import { Injectable } from '@nestjs/common';
+import { CARS_SEED } from './data/cars.seed';  // 👈🏽 ✅
+import { BRANDS_SEED } from './data/brands.seed';  // 👈🏽 ✅
+@Injectable()
+export class SeedService {
+  populateDB() {
+    return 'SEED executed successfully!';
+  }
+}
+```
+
+### 4. Add a new **`fill{entity}WithSeedData()`** method in each service:
+
+In **`cars.service.ts`** file:
+```ts
+  fillCarWithSeedData(cars: Car[]){
+    this.cars = cars,
+  }
+```
+
+In **`brands.service.ts`** file:
+```ts
+  fillBrandWithSeedData(brands: Brand[]){
+    this.brands = brands;
+  }
+```
 
 
 ## 📚 Lecture 0

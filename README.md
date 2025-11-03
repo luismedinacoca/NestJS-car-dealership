@@ -2175,6 +2175,182 @@ export class BrandsService {
 }
 ```
 
+## 📚 Lecture 061. Create Seed Servicio to load data
+
+### 1. Comment all data from **`brands.service.rs`**
+```ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+import { Brand } from './entities/brand.entity';
+import { CreateBrandDto } from './dto/create-brand.dto';
+import { UpdateBrandDto } from './dto/update-brand.dto';
+@Injectable()
+export class BrandsService {
+  private brands: Brand[] = [];  //👈🏽 ✅
+    /*{
+      id: uuid(),
+      name: 'Toyota',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+    },
+  ]  */
+  create(createBrandDto: CreateBrandDto) {
+    const { name } = createBrandDto;
+    const brand: Brand = {
+      id: uuid(),
+      name: name.toLocaleLowerCase(),
+      createdAt: new Date().getTime(),
+    };
+    this.brands.push(brand);
+    return brand;
+  }
+  findAll() {
+    return this.brands;
+  }
+  findOne(id: string) {
+    const brand = this.brands.find((brand) => brand.id === id);
+    if (!brand) throw new NotFoundException(`Brand with id "${id} not found"`);
+    return brand;
+  }
+  update(id: string, updateBrandDto: UpdateBrandDto) {
+    let brandDB = this.findOne(id);
+    this.brands = this.brands.map((brand) => {
+      if (brand.id === id) {
+        brand.updatedAt = new Date().getTime();
+        brandDB = { ...brandDB, ...updateBrandDto, id };
+        return brandDB;
+      }
+      return brand;
+    });
+    return brandDB;
+  }
+  remove(id: string) {
+    this.findOne(id);
+    this.brands = this.brands.filter((brand) => brand.id !== id);
+    return `This action removes a #${id} brand`;
+  }
+}
+```
+
+### 2. Comment all cars data from **`cars.sservice.ts`**:
+```ts
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuid } from 'uuid';
+import { CreateCarDto, UpdateCarDto } from './dto';
+@Injectable()
+export class CarsService {
+  private cars: Car[] = []  // 👈🏽 ✅
+    /*{
+      id: uuid(),
+      brand: 'Toyota',
+      model: 'Corolla',
+    },
+  ];
+  */
+  findAll() {
+    return this.cars;
+  }
+  findOneById(id: string) {
+    const car = this.cars.find((car) => car.id === id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    return car;
+  }
+  create(createCarDto: CreateCarDto) {
+    const car: Car = {
+      id: uuid(),
+      ...createCarDto,
+    };
+    this.cars.push(car);
+    return car;
+  }
+  update(id: string, updateCarDto: UpdateCarDto) {
+    let carDB = this.findOneById(id);
+    if (updateCarDto.id && updateCarDto.id !== id)
+      throw new BadRequestException(`Car ID is not valid inside body`);
+    this.cars = this.cars.map((car) => {
+      if (car.id === id) {
+        carDB = { ...carDB, ...updateCarDto, id };
+        return carDB;
+      }
+      return car;
+    });
+    return carDB;
+  }
+  delete(id: string) {
+    const car = this.findOneById(id);
+    if (!car) throw new NotFoundException(`Car with id '${id}' was not found!`);
+    this.cars = this.cars.filter((car) => car.id !== id);
+    return car;
+  }
+}
+```
+
+### 3. Generate with Nest command the seed service
+
+```bash
+nest g res seed --no-spec
+```
+
+<img src="./img/section05-lecture061-001.png">
+
+#### 3.1 Delete:
+* src/seed/dto
+* src/seed/entities
+
+### 4. Modify **`seed.controller.ts`** file:
+```ts
+import { Controller, Get } from '@nestjs/common';
+import { SeedService } from './seed.service';
+
+@Controller('seed')
+export class SeedController {
+  constructor(private readonly seedService: SeedService) {}
+
+  @Get()
+  runSeed() {
+    return this.seedService.findAll();
+  }
+}
+```
+
+### 5. Modify **`seed.service.ts`** ile:
+```ts
+import { Injectable } from '@nestjs/common';
+@Injectable()
+export class SeedService {
+  populateDB(){
+    return 'SEED executed!';
+  }
+}
+```
+
+Meanwhile update the seed.controller.ts file:
+```ts
+import { Controller, Get } from '@nestjs/common';
+import { SeedService } from './seed.service';
+@Controller('seed')
+export class SeedController {
+  constructor(private readonly seedService: SeedService) {}
+  @Get()
+  runSeed() {
+    return this.seedService.populateDB();  // 👈🏽 ✅
+  }
+}
+```
+
+Testing from **Postman/Insomnia**:
+- Method: **GET**
+- URL: **`http//:localhost:3000/seed`**
+- response: 'SEED executed!'
+
+<img src="./img/section05-lecture061-001.png">
+
+
 
 
 ## 📚 Lecture 0
